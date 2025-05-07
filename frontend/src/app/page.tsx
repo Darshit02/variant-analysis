@@ -1,37 +1,41 @@
-import Link from "next/link";
+import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
+    <div className="min-h-screen bg-[#e9eeea]">
+      <header className="border-b border-[#3c4f3d]/10 bg-white">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <h1 className="text-xl font-light tracking-wide text-[#3c4f3d]">
+                <span className="font-normal">EVO</span>
+                <span className="text-[#de8246]">2</span>
+              </h1>
+              <div className="absolute -bottom-1 left-0 h-[2px] w-12 bg-[#de8246]"></div>
             </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
-          </Link>
+            <span className="text-sm font-light text-[#3c4f3d]/70">
+              Variant Analysis
+            </span>
+          </div>
         </div>
-      </div>
-    </main>
+      </header>
+      {/* Main content */}
+      <main className="container mx-auto px-6 py-6">
+        <Card className="mb-6 gap-0 border-none bg-white py-0 shadow-sm">
+          <CardHeader className="pt-4 pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-normal text-[#3c4f3d]/70">
+              Genome Assembly
+              </CardTitle>
+              <div className="text-xs text-[#3c4f3d]/60">
+                Organism: <span className="font-medium">
+                  Human
+                </span>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+      </main>
+    </div>
   );
 }
