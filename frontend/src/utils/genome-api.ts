@@ -11,6 +11,13 @@ export interface ChromosomeFromSearch {
   name: string;
   size: number;
 }
+export interface GeneFromSearch {
+  symbol: string;
+  name: string;
+  chromosome: string;
+  description: string;
+  gene_id: string;
+}
 
 export async function getAvailableGenomes() {
   const apiUrl = `${process.env.NEXT_UCSC_API_URL}/ucscGenomes`;
@@ -87,4 +94,45 @@ export async function getGenomeChromosomes(genomeId: string) {
   return {
     chromosomes: chromosomes,
   };
+}
+
+export async function searchGenes(query: string, genome: string) {
+  const url = `${process.env.NEXT_GENES_URL}`;
+  const params = new URLSearchParams({
+    terms: query,
+    df: "chromosome,Symbol,description,map_location,type_of_gene",
+    ef: "chromosome,Symbol,description,map_location,type_of_gene,GenomicInfo,GeneID",
+  });
+  const response = await fetch(`${url}?${params}`);
+
+  if (!response.ok) {
+    throw new Error("NCBI API Error");
+  }
+
+  const data = await response.json();
+  const results: GeneFromSearch[] = [];
+
+  if (data[0] > 0) {
+    const fieldMap = data[2];
+    const geneIds = fieldMap.GeneID || [];
+    for (let i = 0; i < Math.min(10, data[0]); ++i) {
+      try {
+        const display = data[3][i];
+        let chrom = display[0];
+        if (chrom && !chrom.startsWith("chr")) {
+          chrom = `chr${chrom}`;
+        }
+        results.push({
+          symbol : display[2],
+          name : display[3],
+          chromosome : chrom,
+          description : display[3],
+          gene_id : geneIds[i] || "",
+        })
+      } catch (e) {
+        continue;
+      }
+    }
+  }
+return { query, genome, results };
 }
