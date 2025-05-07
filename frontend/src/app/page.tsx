@@ -1,6 +1,17 @@
+"use client";
+import { useEffect } from "react";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
+import { getAcailableGenomes } from "~/utils/genome-api";
 
 export default function HomePage() {
+  useEffect(() => {
+    const fetchGenomes = async () => {
+      const data = await getAcailableGenomes();
+      console.log(data)
+    };
+    fetchGenomes();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#e9eeea]">
       <header className="border-b border-[#3c4f3d]/10 bg-white">
@@ -25,12 +36,10 @@ export default function HomePage() {
           <CardHeader className="pt-4 pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-normal text-[#3c4f3d]/70">
-              Genome Assembly
+                Genome Assembly
               </CardTitle>
               <div className="text-xs text-[#3c4f3d]/60">
-                Organism: <span className="font-medium">
-                  Human
-                </span>
+                Organism: <span className="font-medium">Human</span>
               </div>
             </div>
           </CardHeader>
