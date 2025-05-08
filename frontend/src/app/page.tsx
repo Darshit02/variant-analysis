@@ -1,6 +1,7 @@
 "use client";
 import { Search, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import GeneViewer from "~/components/gene-viewer";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -164,7 +165,11 @@ export default function HomePage() {
       <main className="container mx-auto px-6 py-6">
         {selectedGene ? (
           <>
-            <h1 className="">Selected gene {selectedGene.name}</h1>
+            <GeneViewer
+            gene={selectedGene}
+            genomeId={selectedGenome}
+            onClose={() => setSelectedGene(null)}
+            />
           </>
         ) : (
           <>
