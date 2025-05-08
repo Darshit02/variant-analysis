@@ -213,7 +213,7 @@ export async function fetchGeneSequence(
 
     const apiStart = start - 1;
     const apiEnd = end;
-
+    // Removed redundant line as genomeId is already a parameter
     const apiUrl = `${process.env.NEXT_UCSC_API_URL}/getData/sequence?genome=${genomeId};chrom=${chromosome};start=${apiStart};end=${apiEnd}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
