@@ -8,8 +8,9 @@ import {
 } from "~/utils/genome-api";
 import { Button } from "~/components/ui/button";
 import { ArrowLeftCircle } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { GeneInformation } from "./gene-info";
+import { GeneSequence } from "./gene-sequance";
 
 export default function GeneViewer({
   gene,
@@ -35,6 +36,15 @@ export default function GeneViewer({
     end: number;
   } | null>(null);
 
+  const [activeSequencePosition, setActiveSequencePosition] = useState<
+    number | null
+  >(null);
+  const [activeReferenceNucleotide, setActiveReferenceNucleotide] = useState<
+    string | null
+  >(null);
+
+ 
+
   const fetchGeneSequence = useCallback(
     async (start: number, end: number) => {
       try {
@@ -45,7 +55,6 @@ export default function GeneViewer({
           actualRange: fetchedRange,
           error: apiError,
         } = await apiFetchGeneSequence(gene.chromosome, start, end, genomeId);
-
         setGeneSequence(sequence);
         setActualRange(fetchedRange);
         if (apiError) {
@@ -53,10 +62,13 @@ export default function GeneViewer({
         }
       } catch (err) {
         setIsSequenceLoading(false);
+      } finally {
+        setIsSequenceLoading(false);
       }
+      
     },
     [gene.chromosome, genomeId],
-  );
+  ) 
 
   useEffect(() => {
     const initializeGeneData = async () => {
@@ -95,6 +107,39 @@ export default function GeneViewer({
     initializeGeneData();
   }, [gene, genomeId]);
 
+  const handleLoadSequence = useCallback(() => {
+    const start = parseInt(startPosition);
+    const end = parseInt(endPosition);
+    let validationError: string | null = null;
+
+    if (isNaN(start) || isNaN(end)) {
+      validationError = "Please enter valid start and end positions";
+    } else if (start >= end) {
+      validationError = "Start position must be less than end position";
+    } else if (geneBound) {
+      const minBound = Math.min(geneBound.min, geneBound.max);
+      const maxBound = Math.max(geneBound.min, geneBound.max);
+      if (start < minBound) {
+        validationError = `Start position (${start.toLocaleString()}) is below the minimum value (${minBound.toLocaleString()})`;
+      } else if (end > maxBound) {
+        validationError = `End position (${end.toLocaleString()}) exceeds the maximum value (${maxBound.toLocaleString()})`;
+      }
+
+      if (end - start > 10000) {
+        validationError = `Selected range exceeds maximum view range of 10.000 bp.`;
+      }
+    }
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
+    fetchGeneSequence(start, end);
+  }, [startPosition, endPosition, fetchGeneSequence, geneBound]);
+
+
   return (
     <div className="space-y-6">
       <Button
@@ -106,6 +151,22 @@ export default function GeneViewer({
         <ArrowLeftCircle className="mr-2 h-4 w-4" />
         Back to Results
       </Button>
+      <GeneSequence
+        geneBounds={geneBound}
+        geneDetail={geneDetails}
+        startPosition={startPosition}
+        endPosition={endPosition}
+        onStartPositionChange={setStartPosition}
+        onEndPositionChange={setEndPosition}
+        sequenceData={geneSequence}
+        sequenceRange={actualRange}
+        isLoading={isSequenceLoading}
+        error={error}
+        onSequenceLoadRequest={handleLoadSequence}
+        onSequenceClick={() => {}}
+        maxViewRange={10000}
+      />
+
       <GeneInformation
         gene={gene}
         geneBounds={geneBound}
