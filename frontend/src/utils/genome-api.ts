@@ -270,7 +270,7 @@ export async function fetchClinVariants(chrom: string, geneBound : GeneBounds,ge
   const positionField = genomeId === "hg19" ? "chrpos37" : "chrpos38";
   const searchTerm = `${chromFormatted}[chromosome] AND ${minBound}:${maxBound}[${positionField}]`;
   const searchUrl =
-  "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi";
+  `${process.env.NEXT_GENES_SUMMARY_URL}/entrez/eutils/esearch.fcgi`;
   const searchParams = new URLSearchParams({
     db: "clinvar",
     term: searchTerm,
@@ -294,7 +294,7 @@ export async function fetchClinVariants(chrom: string, geneBound : GeneBounds,ge
   const variantIds = searchData.esearchresult.idlist;
 
   const summaryUrl =
-    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi";
+    `${process.env.NEXT_GENES_SUMMARY_URL}/entrez/eutils/esummary.fcgi`;
   const summaryParams = new URLSearchParams({
     db: "clinvar",
     id: variantIds.join(","),
