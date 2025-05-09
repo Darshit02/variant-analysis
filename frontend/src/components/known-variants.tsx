@@ -178,7 +178,7 @@ export default function KnownVariants({
                       )}
                     </TableCell>
                     <TableCell className="py-2 text-xs">
-                      <div className="flex flex-col items-end gap-1">
+                      <div className="flex flex-col items-start  gap-1">
                         {variant.variation_type
                           .toLowerCase()
                           .includes("single nucleotide") ? (

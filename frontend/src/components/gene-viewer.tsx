@@ -14,6 +14,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { GeneInformation } from "./gene-info";
 import { GeneSequence } from "./gene-sequance";
 import KnownVariants from "./known-variants";
+import { VariantComparisonModal } from "./variant-comperison-modal";
+import VariantAnalysis, {
+  type VariantAnalysisHandle,
+} from "./variant-analysis";
 
 export default function GeneViewer({
   gene,
@@ -50,6 +54,8 @@ export default function GeneViewer({
   >(null);
   const [comparisonVariant, setComparisonVariant] =
     useState<ClinvarVariant | null>(null);
+
+  const variantAnalysisRef = useRef<VariantAnalysisHandle>(null);
 
   const fetchGeneSequence = useCallback(
     async (start: number, end: number) => {
@@ -183,11 +189,11 @@ export default function GeneViewer({
     }
   }, [geneBound]);
 
-  // const showComparison = (variant: ClinvarVariant) => {
-  //   if (variant.evo2Result) {
-  //     setComparisonVariant(variant);
-  //   }
-  // };
+  const showComparison = (variant: ClinvarVariant) => {
+    if (variant.evo2Result) {
+      setComparisonVariant(variant);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -209,9 +215,20 @@ export default function GeneViewer({
         Back to Results
       </Button>
 
+      <VariantAnalysis
+        ref={variantAnalysisRef}
+        gene={gene}
+        genomeId={genomeId}
+        chromosome={gene.chromosome}
+        clinvarVariants={clinvarVariants}
+        referenceSequence={activeReferenceNucleotide}
+        sequencePosition={activeSequencePosition}
+        geneBounds={geneBound}
+      />
+
       <KnownVariants
         refreshVariants={fetchClinvarVariants}
-        showComparison={() => {}}
+        showComparison={showComparison}
         updateClinvarVariant={updateClinvarVariant}
         clinvarVariants={clinvarVariants}
         isLoadingClinvar={isClinvarLoading}
@@ -240,6 +257,10 @@ export default function GeneViewer({
         gene={gene}
         geneBounds={geneBound}
         geneDetail={geneDetails}
+      />
+      <VariantComparisonModal
+        comparisonVariant={comparisonVariant}
+        onClose={() => setComparisonVariant(null)}
       />
     </div>
   );
